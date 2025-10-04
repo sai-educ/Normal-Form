@@ -23,7 +23,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* ---------- Top-right HOW-TO menu ---------- */
   .howto-anchor{position:fixed; top:10px; right:10px; z-index:1001}
   .howto-btn{
     background:#2a1d40; border:1px solid #4a3a70; color:var(--ink);
@@ -116,7 +115,6 @@
     padding:8px 10px; min-height:38px; font-size:13px;
   }
 
-  /* Matrix Container - Responsive */
   .matrix-wrap{
     position:relative; padding:12px; border-radius:12px;
     background: linear-gradient(180deg, rgba(199,125,255,.03), rgba(199,125,255,0)),
@@ -155,18 +153,11 @@
   .cell input{
     width:100%; height:var(--cell-size); 
     padding:8px; text-align:center; 
-    font-size:clamp(16px, 4vw, 18px); 
+    font-size:clamp(14px, 3.5vw, 16px); 
     font-weight:600; color:var(--ink);
     background:#221844; border:2px solid #3b2f56; 
     border-radius:10px; 
     transition:border-color .2s, box-shadow .2s;
-    appearance:none;
-    -webkit-appearance:none;
-    -moz-appearance:textfield;
-  }
-  .cell input::-webkit-inner-spin-button,
-  .cell input::-webkit-outer-spin-button{
-    -webkit-appearance:none; margin:0;
   }
   .cell input:focus{
     border-color:#7209b7; 
@@ -247,7 +238,6 @@
   }
   .info-box strong{color:#c77dff}
 
-  /* Mobile-specific adjustments */
   @media (max-width:767px){
     .row{gap:6px}
     .pill{font-size:12px; padding:7px 10px}
@@ -267,31 +257,30 @@
 </style>
 </head>
 <body>
-  <!-- Top-right HOW-TO menu -->
   <div class="howto-anchor">
-    <button id="howBtn" class="howto-btn" aria-haspopup="dialog" aria-controls="howPanel">
+    <button id="howBtn" class="howto-btn">
       <span>❓</span>
       <span>How to Use</span>
     </button>
   </div>
-  <div id="howBackdrop" class="backdrop" tabindex="-1" aria-hidden="true"></div>
-  <div id="howPanel" class="howto-panel" role="dialog" aria-modal="true" aria-labelledby="howTitle" aria-hidden="true">
+  <div id="howBackdrop" class="backdrop"></div>
+  <div id="howPanel" class="howto-panel">
     <div class="howto-inner">
       <div class="howto-head">
         <div id="howTitle" class="howto-title">How to Use • వాడుక మార్గదర్శకం</div>
-        <button id="howClose" class="close-btn" aria-label="Close">✕</button>
+        <button id="howClose" class="close-btn">✕</button>
       </div>
-      <div class="lang-tabs" role="tablist" aria-label="Language tabs">
-        <button id="tabEN" class="tab" role="tab" aria-selected="true" aria-controls="panelEN">English</button>
-        <button id="tabTE" class="tab" role="tab" aria-selected="false" aria-controls="panelTE">తెలుగు</button>
+      <div class="lang-tabs">
+        <button id="tabEN" class="tab" aria-selected="true">English</button>
+        <button id="tabTE" class="tab" aria-selected="false">తెలుగు</button>
       </div>
 
-      <!-- English panel -->
-      <section id="panelEN" class="howto-section" role="tabpanel" aria-labelledby="tabEN">
+      <section id="panelEN" class="howto-section">
         <h3>🎯 Learning Goals</h3>
         <ul class="muted">
           <li>Understand <span class="highlight">Normal Form</span> as diagonal matrix with identity block</li>
           <li>Master both <span class="highlight">row AND column operations</span></li>
+          <li>Work with <span class="highlight">exact rational arithmetic</span> (no decimals!)</li>
           <li>Learn systematic reduction: pivot → scale to 1 → zero row & column</li>
           <li>See how rank appears as the size of the identity block (I<sub>r</sub>)</li>
           <li>Connect Normal Form to invertibility and system solutions</li>
@@ -300,30 +289,31 @@
         <h3>📋 Step-by-Step Instructions</h3>
         <ol>
           <li><strong>Set Matrix Size:</strong> Choose rows and columns (max 6×6), tap <strong>Resize</strong></li>
-          <li><strong>Enter Values:</strong> Tap cells to enter numbers, or use <strong>Preset</strong>/<strong>Randomize</strong></li>
+          <li><strong>Enter Values:</strong> Tap cells to enter <strong>integers or fractions</strong> (e.g., 3, -2, 1/2, -3/4)</li>
           <li><strong>Auto Mode:</strong> Tap <strong>Next Step</strong> to see operations one at a time
             <ul style="margin-left:1.2em; margin-top:0.3em">
               <li>Algorithm finds pivot, swaps to diagonal, scales to 1</li>
               <li>Zeros entire row and column around pivot</li>
               <li>Watch identity block grow step-by-step!</li>
+              <li>All arithmetic maintains exact fractions</li>
             </ul>
           </li>
           <li><strong>Fast Mode:</strong> Tap <strong>Finish to Normal Form</strong> to complete automatically</li>
-          <li><strong>Manual Practice:</strong> Use row/column operations yourself</li>
+          <li><strong>Manual Practice:</strong> Use row/column operations yourself with rational multipliers</li>
           <li><strong>Check Result:</strong> <strong>Verify Normal Form</strong> confirms diagonal structure</li>
         </ol>
 
         <div class="info-box">
-          <strong>💡 Key Concept:</strong> Normal Form = diag(I<sub>r</sub>, 0) where r is the rank. The identity block shows linearly independent rows/columns!
+          <strong>💡 Key Concept:</strong> Normal Form = diag(I<sub>r</sub>, 0) where r is the rank. Using rational numbers ensures exact arithmetic with no rounding errors!
         </div>
       </section>
 
-      <!-- Telugu panel -->
-      <section id="panelTE" class="howto-section" role="tabpanel" aria-labelledby="tabTE" hidden>
+      <section id="panelTE" class="howto-section" hidden>
         <h3>🎯 అభ్యాస లక్ష్యాలు</h3>
         <ul class="muted">
           <li><span class="highlight">Normal Form</span> ను identity block తో కూడిన diagonal matrix గా అర్థం చేసుకోవడం</li>
           <li><span class="highlight">వరుస మరియు కాలమ్ రెండు ఆపరేషన్లు</span> నేర్చుకోవడం</li>
+          <li><span class="highlight">ఖచ్చితమైన పరిమేయ అంకగణితం</span>తో పని చేయడం (దశాంశాలు లేవు!)</li>
           <li>క్రమబద్ధ తగ్గింపు: pivot → 1కి scale → వరుస & కాలమ్ zero చేయడం</li>
           <li>Rank ఎలా identity block (I<sub>r</sub>) పరిమాణంగా కనిపిస్తుందో చూడటం</li>
           <li>Normal Form ను invertibility మరియు సిస్టమ్ పరిష్కారాలతో కలపడం</li>
@@ -332,21 +322,22 @@
         <h3>📋 దశలవారీ సూచనలు</h3>
         <ol>
           <li><strong>మాట్రిక్స్ పరిమాణం:</strong> వరుసలు మరియు నిలువులు ఎంచుకోండి, <strong>Resize</strong> నొక్కండి</li>
-          <li><strong>విలువలు నమోదు:</strong> సెల్స్ పై నొక్కి సంఖ్యలు ఇవ్వండి, లేదా <strong>Preset</strong>/<strong>Randomize</strong> వాడండి</li>
+          <li><strong>విలువలు నమోదు:</strong> <strong>పూర్ణాంకాలు లేదా భిన్నాలు</strong> నమోదు చేయండి (ఉదా: 3, -2, 1/2, -3/4)</li>
           <li><strong>ఆటో మోడ్:</strong> <strong>Next Step</strong> నొక్కి ఒక్కో చర్య చూడండి
             <ul style="margin-left:1.2em; margin-top:0.3em">
               <li>అల్గారిథమ్ pivot కనుగొని, diagonal కు swap చేసి, 1కి scale చేస్తుంది</li>
               <li>Pivot చుట్టూ మొత్తం వరుస మరియు కాలమ్ ను 0 చేస్తుంది</li>
               <li>Identity block పెరుగుతుంటే చూడండి!</li>
+              <li>అన్ని అంకగణితం ఖచ్చితమైన భిన్నాలను నిర్వహిస్తుంది</li>
             </ul>
           </li>
           <li><strong>వేగవంతం:</strong> <strong>Finish to Normal Form</strong> తో ఆటోమేటిక్‌గా పూర్తి చేయండి</li>
-          <li><strong>మానువల్ ప్రాక్టీస్:</strong> మీరే వరుస/కాలమ్ ఆపరేషన్లు చేయండి</li>
+          <li><strong>మానువల్ ప్రాక్టీస్:</strong> పరిమేయ గుణకాలతో మీరే వరుస/కాలమ్ ఆపరేషన్లు చేయండి</li>
           <li><strong>తనిఖీ:</strong> <strong>Verify Normal Form</strong> తో diagonal నిర్మాణాన్ని పరిశీలించండి</li>
         </ol>
 
         <div class="info-box">
-          <strong>💡 ముఖ్య భావన:</strong> Normal Form = diag(I<sub>r</sub>, 0) ఇక్కడ r rank. Identity block linearly independent వరుసలు/నిలువులను చూపిస్తుంది!
+          <strong>💡 ముఖ్య భావన:</strong> Normal Form = diag(I<sub>r</sub>, 0) ఇక్కడ r rank. పరిమేయ సంఖ్యలను ఉపయోగించడం ద్వారా rounding లోపాలు లేకుండా ఖచ్చితమైన అంకగణితం అందిస్తుంది!
         </div>
       </section>
     </div>
@@ -355,22 +346,21 @@
 <header>
   <h1>Matrix Rank — Normal Form Lab</h1>
   <p class="sub">
-    <strong>Goal:</strong> Learn to find the <strong>rank of a matrix</strong> using <strong>Normal Form reduction</strong>. 
-    Use both row and column operations to create a diagonal matrix with an identity block. The size of the identity tells you the rank!
+    <strong>Goal:</strong> Learn to find the <strong>rank of a matrix</strong> using <strong>Normal Form reduction</strong> with <strong>exact rational arithmetic</strong>. 
+    Use both row and column operations to create a diagonal matrix with an identity block. All operations use fractions to maintain perfect accuracy!
   </p>
 </header>
 
 <main>
-  <!-- Matrix & Controls -->
   <section class="card">
-    <div class="row" aria-label="Matrix size and presets">
+    <div class="row">
       <div class="pill">
         <span>Rows:</span>
-        <input id="rows" type="number" inputmode="numeric" min="2" max="6" value="3" style="width:55px">
+        <input id="rows" type="number" min="2" max="6" value="3" style="width:55px">
       </div>
       <div class="pill">
         <span>Cols:</span>
-        <input id="cols" type="number" inputmode="numeric" min="2" max="6" value="4" style="width:55px">
+        <input id="cols" type="number" min="2" max="6" value="4" style="width:55px">
       </div>
       <button id="resize">Resize</button>
     </div>
@@ -386,7 +376,7 @@
 
     <div class="spacer"></div>
 
-    <div class="matrix-wrap brackets" aria-label="Matrix grid">
+    <div class="matrix-wrap brackets">
       <div id="matrix" class="matrix"></div>
     </div>
 
@@ -400,7 +390,7 @@
 
     <div class="spacer"></div>
 
-    <div class="row auto-controls" aria-label="Auto controls">
+    <div class="row auto-controls">
       <button id="next" class="primary">Next Step ▷</button>
       <button id="finish" class="ok">Finish to Normal Form</button>
       <button id="verify" class="ghost">Verify</button>
@@ -422,13 +412,13 @@
           <button id="rSwapBtn" style="padding:8px 12px; min-height:38px; font-size:12px">Swap</button>
         </div>
         <div class="pill" style="width:100%; justify-content:space-between; margin-bottom:6px">
-          <span style="font-size:12px">Scale R<select id="rScale"></select> by <input id="rScaleK" type="number" value="2" step="0.5" style="width:55px; padding:6px; font-size:12px"></span>
+          <span style="font-size:12px">Scale R<select id="rScale"></select> by <input id="rScaleK" type="text" value="2" placeholder="2 or 1/2" style="width:65px; padding:6px; font-size:12px"></span>
           <button id="rScaleBtn" style="padding:8px 12px; min-height:38px; font-size:12px">Scale</button>
         </div>
         <div style="font-size:11px; margin-bottom:6px; color:var(--muted)">
           R<select id="rAddDest" style="width:48px; padding:6px; font-size:11px"></select> ← 
           R<select id="rAddDest2" style="width:48px; padding:6px; font-size:11px"></select> + 
-          <input id="rAddK" type="number" value="-1" step="0.5" style="width:55px; padding:6px; font-size:11px">·R<select id="rAddSrc" style="width:48px; padding:6px; font-size:11px"></select>
+          <input id="rAddK" type="text" value="-1" placeholder="-1 or 1/2" style="width:65px; padding:6px; font-size:11px">·R<select id="rAddSrc" style="width:48px; padding:6px; font-size:11px"></select>
         </div>
         <button id="rAddBtn" style="width:100%; font-size:12px">Add Multiple of Row</button>
       </div>
@@ -440,25 +430,24 @@
           <button id="cSwapBtn" style="padding:8px 12px; min-height:38px; font-size:12px">Swap</button>
         </div>
         <div class="pill" style="width:100%; justify-content:space-between; margin-bottom:6px">
-          <span style="font-size:12px">Scale C<select id="cScale"></select> by <input id="cScaleK" type="number" value="2" step="0.5" style="width:55px; padding:6px; font-size:12px"></span>
+          <span style="font-size:12px">Scale C<select id="cScale"></select> by <input id="cScaleK" type="text" value="2" placeholder="2 or 1/2" style="width:65px; padding:6px; font-size:12px"></span>
           <button id="cScaleBtn" style="padding:8px 12px; min-height:38px; font-size:12px">Scale</button>
         </div>
         <div style="font-size:11px; margin-bottom:6px; color:var(--muted)">
           C<select id="cAddDest" style="width:48px; padding:6px; font-size:11px"></select> ← 
           C<select id="cAddDest2" style="width:48px; padding:6px; font-size:11px"></select> + 
-          <input id="cAddK" type="number" value="-1" step="0.5" style="width:55px; padding:6px; font-size:11px">·C<select id="cAddSrc" style="width:48px; padding:6px; font-size:11px"></select>
+          <input id="cAddK" type="text" value="-1" placeholder="-1 or 1/2" style="width:65px; padding:6px; font-size:11px">·C<select id="cAddSrc" style="width:48px; padding:6px; font-size:11px"></select>
         </div>
         <button id="cAddBtn" style="width:100%; font-size:12px">Add Multiple of Col</button>
       </div>
       
       <div class="spacer"></div>
       <div class="muted" style="font-size:11px; line-height:1.5">
-        <strong>Tip:</strong> To get diagonal form, use column ops to zero left/right of pivots!
+        <strong>Tip:</strong> Enter fractions like 1/2, -3/4. All arithmetic is exact!
       </div>
     </details>
   </section>
 
-  <!-- Lesson, Narration, KPIs, Log -->
   <aside class="card">
     <h2>📚 Concept: Normal Form</h2>
     <div class="muted" id="lesson" style="line-height:1.6; font-size:13px">
@@ -468,12 +457,12 @@
       <p><strong>Row & Column Operations:</strong></p>
       <ul style="margin:.3em 0 .3em 1.2em">
         <li><strong>Swap:</strong> R<sub>i</sub> ↔ R<sub>j</sub> or C<sub>i</sub> ↔ C<sub>j</sub></li>
-        <li><strong>Scale:</strong> R<sub>i</sub> ← k·R<sub>i</sub> or C<sub>j</sub> ← k·C<sub>j</sub></li>
-        <li><strong>Add:</strong> R<sub>i</sub> ← R<sub>i</sub> + k·R<sub>j</sub> or C<sub>i</sub> ← C<sub>i</sub> + k·C<sub>j</sub></li>
+        <li><strong>Scale:</strong> R<sub>i</sub> ← k·R<sub>i</sub> or C<sub>j</sub> ← k·C<sub>j</sub> (k ≠ 0, rational)</li>
+        <li><strong>Add:</strong> R<sub>i</sub> ← R<sub>i</sub> + k·R<sub>j</sub> or C<sub>i</sub> ← C<sub>i</sub> + k·C<sub>j</sub> (k rational)</li>
       </ul>
       
       <div class="info-box" style="margin-top:12px">
-        <strong>Key:</strong> Normal Form reveals rank instantly and shows if a square matrix is invertible (rank = n means invertible)!
+        <strong>Key:</strong> Using rational numbers (fractions) ensures perfect accuracy throughout the reduction process—no rounding errors!
       </div>
     </div>
 
@@ -500,7 +489,7 @@
     <div class="spacer"></div>
 
     <h2>📋 Operation Log</h2>
-    <div id="log" class="log" aria-live="polite"><div class="muted">Operations will appear here...</div></div>
+    <div id="log" class="log"><div class="muted">Operations will appear here...</div></div>
 
     <details style="margin-top:14px">
       <summary>🤔 Practice Questions</summary>
@@ -509,6 +498,7 @@
         <li>Can a 3×5 matrix have a 4×4 identity block? Why?</li>
         <li>If a 4×4 matrix has rank 4, what's its Normal Form?</li>
         <li>Why do we need column operations for Normal Form?</li>
+        <li>Why use fractions instead of decimals in exact computation?</li>
       </ul>
     </details>
   </aside>
@@ -516,39 +506,74 @@
 
 <footer>
   <strong>Engineering Mathematics • Normal Form Lab</strong><br>
-  Row & column operations • Diagonal reduction • Identity block visualization
+  Row & column operations • Exact rational arithmetic • Identity block visualization
 </footer>
 
 <script>
 /* ===========================
-   Core State & Utilities
+   Fraction Class
+   =========================== */
+class Frac {
+  constructor(n, d = 1) {
+    if (d === 0) throw new Error("Division by zero");
+    const g = Frac.gcd(Math.abs(n), Math.abs(d));
+    this.n = (d < 0 ? -n : n) / g;
+    this.d = Math.abs(d) / g;
+  }
+  
+  static gcd(a, b) {
+    return b === 0 ? a : Frac.gcd(b, a % b);
+  }
+  
+  static parse(s) {
+    s = s.toString().trim();
+    if (s === '' || s === '-') return new Frac(0);
+    if (s.includes('/')) {
+      const parts = s.split('/');
+      return new Frac(parseInt(parts[0]) || 0, parseInt(parts[1]) || 1);
+    }
+    return new Frac(parseInt(s) || 0);
+  }
+  
+  add(f) { return new Frac(this.n * f.d + f.n * this.d, this.d * f.d); }
+  sub(f) { return new Frac(this.n * f.d - f.n * this.d, this.d * f.d); }
+  mul(f) { return new Frac(this.n * f.n, this.d * f.d); }
+  div(f) { return new Frac(this.n * f.d, this.d * f.n); }
+  neg() { return new Frac(-this.n, this.d); }
+  inv() { return new Frac(this.d, this.n); }
+  abs() { return new Frac(Math.abs(this.n), this.d); }
+  isZero() { return this.n === 0; }
+  isOne() { return this.n === this.d; }
+  
+  toString() {
+    if (this.d === 1) return this.n.toString();
+    return `${this.n}/${this.d}`;
+  }
+  
+  toFloat() { return this.n / this.d; }
+}
+
+/* ===========================
+   Core State
    =========================== */
 let R=3, C=4;
 let inputs = [];
 let stepState = null;
 let logEl, narrEl;
 
-function round(x, decimals=2) {
-  return Math.round(x * Math.pow(10, decimals)) / Math.pow(10, decimals);
-}
-
 /* ===========================
-   HOW-TO menu behavior
+   HOW-TO menu
    =========================== */
 function openHowto(){
   document.getElementById('howBackdrop').classList.add('open');
   const p = document.getElementById('howPanel');
   p.classList.add('open');
-  p.setAttribute('aria-hidden','false');
-  document.getElementById('howBtn').setAttribute('aria-expanded','true');
   document.body.style.overflow = 'hidden';
 }
 function closeHowto(){
   document.getElementById('howBackdrop').classList.remove('open');
   const p = document.getElementById('howPanel');
   p.classList.remove('open');
-  p.setAttribute('aria-hidden','true');
-  document.getElementById('howBtn').setAttribute('aria-expanded','false');
   document.body.style.overflow = '';
 }
 function selectLang(tab){
@@ -560,7 +585,7 @@ function selectLang(tab){
 }
 
 /* ===========================
-   Matrix Grid Management
+   Matrix Grid
    =========================== */
 function createGrid(){
   const grid = document.getElementById('matrix');
@@ -574,29 +599,19 @@ function createGrid(){
       const cell = document.createElement('div');
       cell.className = 'cell';
       const inp = document.createElement('input');
-      inp.type = 'number';
-      inp.inputMode = 'numeric';
+      inp.type = 'text';
       inp.value = '0';
-      inp.step = '0.5';
       inp.setAttribute('aria-label', `Row ${r+1}, Col ${c+1}`);
       
-      inp.addEventListener('input', () => {
-        drawLabels();
-      });
       inp.addEventListener('blur', () => {
         if (inp.value === '' || inp.value === '-') inp.value = '0';
-        inp.value = round(parseFloat(inp.value || 0), 2);
-      });
-      
-      let lastTap = 0;
-      inp.addEventListener('touchend', (e) => {
-        const currentTime = new Date().getTime();
-        const tapLength = currentTime - lastTap;
-        if (tapLength < 300 && tapLength > 0) {
-          e.preventDefault();
-          inp.focus();
+        try {
+          const f = Frac.parse(inp.value);
+          inp.value = f.toString();
+        } catch(e) {
+          inp.value = '0';
         }
-        lastTap = currentTime;
+        drawLabels();
       });
       
       cell.appendChild(inp);
@@ -608,7 +623,7 @@ function createGrid(){
   
   refreshSelectors();
   drawLabels();
-  setNarr('Matrix created. Enter values or use presets.');
+  setNarr('Matrix created. Enter integers or fractions (e.g., 3, -2, 1/2).');
   clearLog();
   updateKPIs();
 }
@@ -618,7 +633,7 @@ function getM(){
   for (let r=0; r<R; r++){
     const row = [];
     for (let c=0; c<C; c++){
-      row.push(parseFloat(inputs[r][c].value || '0'));
+      row.push(Frac.parse(inputs[r][c].value));
     }
     M.push(row);
   }
@@ -633,7 +648,7 @@ function setM(M){
   createGrid();
   for (let r=0; r<R; r++){
     for (let c=0; c<C; c++){
-      inputs[r][c].value = round(M[r][c], 2);
+      inputs[r][c].value = M[r][c].toString();
     }
   }
   drawLabels();
@@ -665,56 +680,52 @@ function randomM(){
    =========================== */
 function swapRows(M, i, j){
   if (i === j) return;
-  const temp = M[i];
-  M[i] = M[j];
-  M[j] = temp;
+  [M[i], M[j]] = [M[j], M[i]];
   log(`<span class="log-step">Swap Rows</span> R<sub>${i+1}</sub> ↔ R<sub>${j+1}</sub>`);
 }
 
 function swapCols(M, i, j){
   if (i === j) return;
   for (let r=0; r<R; r++){
-    const temp = M[r][i];
-    M[r][i] = M[r][j];
-    M[r][j] = temp;
+    [M[r][i], M[r][j]] = [M[r][j], M[r][i]];
   }
   log(`<span class="log-step">Swap Cols</span> C<sub>${i+1}</sub> ↔ C<sub>${j+1}</sub>`);
 }
 
 function scaleRow(M, i, k){
   for (let c=0; c<C; c++){
-    M[i][c] = round(M[i][c] * k, 2);
+    M[i][c] = M[i][c].mul(k);
   }
-  log(`<span class="log-step">Scale Row</span> R<sub>${i+1}</sub> ← ${round(k,2)}·R<sub>${i+1}</sub>`);
+  log(`<span class="log-step">Scale Row</span> R<sub>${i+1}</sub> ← ${k.toString()}·R<sub>${i+1}</sub>`);
 }
 
 function scaleCol(M, j, k){
   for (let r=0; r<R; r++){
-    M[r][j] = round(M[r][j] * k, 2);
+    M[r][j] = M[r][j].mul(k);
   }
-  log(`<span class="log-step">Scale Col</span> C<sub>${j+1}</sub> ← ${round(k,2)}·C<sub>${j+1}</sub>`);
+  log(`<span class="log-step">Scale Col</span> C<sub>${j+1}</sub> ← ${k.toString()}·C<sub>${j+1}</sub>`);
 }
 
 function addRow(M, dest, src, k){
   for (let c=0; c<C; c++){
-    M[dest][c] = round(M[dest][c] + k * M[src][c], 2);
+    M[dest][c] = M[dest][c].add(M[src][c].mul(k));
   }
-  const sign = k >= 0 ? '+' : '';
-  log(`<span class="log-step">Add Row</span> R<sub>${dest+1}</sub> ← R<sub>${dest+1}</sub> ${sign} ${round(k,2)}·R<sub>${src+1}</sub>`);
+  const sign = k.n >= 0 ? '+' : '';
+  log(`<span class="log-step">Add Row</span> R<sub>${dest+1}</sub> ← R<sub>${dest+1}</sub> ${sign} ${k.toString()}·R<sub>${src+1}</sub>`);
 }
 
 function addCol(M, dest, src, k){
   for (let r=0; r<R; r++){
-    M[r][dest] = round(M[r][dest] + k * M[r][src], 2);
+    M[r][dest] = M[r][dest].add(M[r][src].mul(k));
   }
-  const sign = k >= 0 ? '+' : '';
-  log(`<span class="log-step">Add Col</span> C<sub>${dest+1}</sub> ← C<sub>${dest+1}</sub> ${sign} ${round(k,2)}·C<sub>${src+1}</sub>`);
+  const sign = k.n >= 0 ? '+' : '';
+  log(`<span class="log-step">Add Col</span> C<sub>${dest+1}</sub> ← C<sub>${dest+1}</sub> ${sign} ${k.toString()}·C<sub>${src+1}</sub>`);
 }
 
 function writeBack(M){
   for (let r=0; r<R; r++){
     for (let c=0; c<C; c++){
-      inputs[r][c].value = round(M[r][c], 2);
+      inputs[r][c].value = M[r][c].toString();
     }
   }
   drawLabels();
@@ -728,7 +739,7 @@ function calculateRank(M){
   let rank = 0;
   const n = Math.min(R, C);
   for (let i=0; i<n; i++){
-    if (Math.abs(M[i][i] - 1) < 0.01) rank++;
+    if (M[i][i].isOne()) rank++;
     else break;
   }
   return rank;
@@ -739,9 +750,9 @@ function isNormalForm(M){
   for (let i=0; i<R; i++){
     for (let j=0; j<C; j++){
       if (i === j && i < r){
-        if (Math.abs(M[i][j] - 1) > 0.01) return false;
+        if (!M[i][j].isOne()) return false;
       } else {
-        if (Math.abs(M[i][j]) > 0.01) return false;
+        if (!M[i][j].isZero()) return false;
       }
     }
   }
@@ -776,7 +787,7 @@ function nextStep(){
     let found = false;
     for (let i=k; i<R && !found; i++){
       for (let j=k; j<C && !found; j++){
-        if (Math.abs(M[i][j]) > 0.01){
+        if (!M[i][j].isZero()){
           if (i !== k){
             swapRows(M, k, i);
             writeBack(M);
@@ -807,10 +818,10 @@ function nextStep(){
   
   if (stage === 'scalePivot'){
     const pivot = M[k][k];
-    if (Math.abs(pivot - 1) > 0.01){
-      scaleRow(M, k, 1/pivot);
+    if (!pivot.isOne()){
+      scaleRow(M, k, pivot.inv());
       writeBack(M);
-      setNarr(`Scaled row ${k+1} so pivot becomes 1.`);
+      setNarr(`Scaled row ${k+1} by ${pivot.inv().toString()} so pivot becomes 1.`);
       stepState.stage = 'zeroCol';
       return;
     }
@@ -819,8 +830,8 @@ function nextStep(){
   
   if (stage === 'zeroCol'){
     for (let r=0; r<R; r++){
-      if (r !== k && Math.abs(M[r][k]) > 0.01){
-        const factor = -M[r][k];
+      if (r !== k && !M[r][k].isZero()){
+        const factor = M[r][k].neg();
         addRow(M, r, k, factor);
         writeBack(M);
         setNarr(`Zeroing position (${r+1},${k+1}) using row operation.`);
@@ -832,8 +843,8 @@ function nextStep(){
   
   if (stage === 'zeroRow'){
     for (let c=0; c<C; c++){
-      if (c !== k && Math.abs(M[k][c]) > 0.01){
-        const factor = -M[k][c];
+      if (c !== k && !M[k][c].isZero()){
+        const factor = M[k][c].neg();
         addCol(M, c, k, factor);
         writeBack(M);
         setNarr(`Zeroing position (${k+1},${c+1}) using column operation.`);
@@ -857,13 +868,12 @@ function finish(){
 /* ===========================
    Visual Labels
    =========================== */
-function drawLabels(opts = {}){
+function drawLabels(){
   document.querySelectorAll('.identityMark, .zeroMark, .identity-block-overlay').forEach(e => e.remove());
   
   const M = getM();
   const r = calculateRank(M);
   
-  // Draw identity block overlay
   if (r > 0 && inputs[0] && inputs[0][0]){
     const overlay = document.createElement('div');
     overlay.className = 'identity-block-overlay';
@@ -878,9 +888,8 @@ function drawLabels(opts = {}){
     document.getElementById('matrix').appendChild(overlay);
   }
   
-  // Mark identity cells
   for (let i=0; i<Math.min(r, R, C); i++){
-    if (Math.abs(M[i][i] - 1) < 0.01){
+    if (M[i][i].isOne()){
       const cell = inputs[i][i].parentElement;
       const mark = document.createElement('div');
       mark.className = 'identityMark';
@@ -890,11 +899,9 @@ function drawLabels(opts = {}){
     }
   }
   
-  // Mark cells that should be zero
   for (let i=0; i<R; i++){
     for (let j=0; j<C; j++){
-      const shouldBeZero = (i !== j && (i < r || j < r)) || (i >= r && j >= r && (i < r || j < r));
-      if (Math.abs(M[i][j]) > 0.01 && ((i < r && j >= r) || (i >= r && j < r) || (i !== j && i < r && j < r))){
+      if (!M[i][j].isZero() && ((i < r && j >= r) || (i >= r && j < r) || (i !== j && i < r && j < r))){
         const mark = document.createElement('div');
         mark.className = 'zeroMark';
         mark.textContent = '→0';
@@ -907,9 +914,7 @@ function drawLabels(opts = {}){
         inputs[i][j].classList.remove('zero-cell');
       }
       
-      if (i === j && i < r){
-        // Already handled above
-      } else {
+      if (!(i === j && i < r)){
         inputs[i][j].classList.remove('identity-cell');
       }
     }
@@ -925,9 +930,6 @@ function updateKPIs(){
   document.getElementById('identitySize').textContent = `${r}×${r}`;
 }
 
-/* ===========================
-   UI Helpers
-   =========================== */
 function setNarr(html){
   narrEl.innerHTML = html;
 }
@@ -962,9 +964,9 @@ function refreshSelectors(){
 
 function presetA(){
   setM([
-    [2, 4, 6, 8],
-    [1, 2, 1, 3],
-    [3, 6, 7, 11]
+    [new Frac(2), new Frac(4), new Frac(6), new Frac(8)],
+    [new Frac(1), new Frac(2), new Frac(1), new Frac(3)],
+    [new Frac(3), new Frac(6), new Frac(7), new Frac(11)]
   ]);
   setNarr('<strong>Preset A loaded.</strong> Rank 2 expected. Watch row & column operations!');
   log('<strong>Preset A:</strong> 3×4 matrix (rank 2)');
@@ -973,10 +975,10 @@ function presetA(){
 
 function presetB(){
   setM([
-    [1, 2, 3, 4],
-    [2, 4, 6, 8],
-    [1, 1, 1, 1],
-    [0, 1, 2, 3]
+    [new Frac(1), new Frac(2), new Frac(3), new Frac(4)],
+    [new Frac(2), new Frac(4), new Frac(6), new Frac(8)],
+    [new Frac(1), new Frac(1), new Frac(1), new Frac(1)],
+    [new Frac(0), new Frac(1), new Frac(2), new Frac(3)]
   ]);
   setNarr('<strong>Preset B loaded.</strong> Rank 3 expected. See identity block emerge!');
   log('<strong>Preset B:</strong> 4×4 matrix (rank 3)');
@@ -990,7 +992,6 @@ window.addEventListener('DOMContentLoaded', () => {
   logEl = document.getElementById('log');
   narrEl = document.getElementById('narr');
   
-  // How-to menu
   document.getElementById('howBtn').addEventListener('click', () => {
     const panel = document.getElementById('howPanel');
     if (panel.classList.contains('open')) closeHowto();
@@ -1004,7 +1005,6 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tabEN').addEventListener('click', () => selectLang('EN'));
   document.getElementById('tabTE').addEventListener('click', () => selectLang('TE'));
   
-  // Matrix controls
   document.getElementById('resize').addEventListener('click', () => {
     const r = Math.max(2, Math.min(6, parseInt(document.getElementById('rows').value || '3')));
     const c = Math.max(2, Math.min(6, parseInt(document.getElementById('cols').value || '4')));
@@ -1048,7 +1048,6 @@ window.addEventListener('DOMContentLoaded', () => {
     drawLabels();
   });
   
-  // Manual row operations
   document.getElementById('rSwapBtn').addEventListener('click', () => {
     const a = parseInt(document.getElementById('rSwapA').value);
     const b = parseInt(document.getElementById('rSwapB').value);
@@ -1061,27 +1060,37 @@ window.addEventListener('DOMContentLoaded', () => {
   
   document.getElementById('rScaleBtn').addEventListener('click', () => {
     const i = parseInt(document.getElementById('rScale').value);
-    const k = parseFloat(document.getElementById('rScaleK').value || 1);
-    const M = getM();
-    scaleRow(M, i, k);
-    writeBack(M);
-    setNarr(`Scaled R<sub>${i+1}</sub> by ${round(k,2)}.`);
-    stepState = null;
+    try {
+      const k = Frac.parse(document.getElementById('rScaleK').value);
+      if (k.isZero()) {
+        alert('Cannot scale by zero!');
+        return;
+      }
+      const M = getM();
+      scaleRow(M, i, k);
+      writeBack(M);
+      setNarr(`Scaled R<sub>${i+1}</sub> by ${k.toString()}.`);
+      stepState = null;
+    } catch(e) {
+      alert('Invalid fraction format. Use integers or fractions like 1/2.');
+    }
   });
   
   document.getElementById('rAddBtn').addEventListener('click', () => {
     const dest = parseInt(document.getElementById('rAddDest').value);
     const src = parseInt(document.getElementById('rAddSrc').value);
-    const k = parseFloat(document.getElementById('rAddK').value || 0);
-    
-    const M = getM();
-    addRow(M, dest, src, k);
-    writeBack(M);
-    setNarr(`Added: R<sub>${dest+1}</sub> ← R<sub>${dest+1}</sub> + ${round(k,2)}×R<sub>${src+1}</sub>.`);
-    stepState = null;
+    try {
+      const k = Frac.parse(document.getElementById('rAddK').value);
+      const M = getM();
+      addRow(M, dest, src, k);
+      writeBack(M);
+      setNarr(`Added: R<sub>${dest+1}</sub> ← R<sub>${dest+1}</sub> + ${k.toString()}×R<sub>${src+1}</sub>.`);
+      stepState = null;
+    } catch(e) {
+      alert('Invalid fraction format. Use integers or fractions like 1/2.');
+    }
   });
   
-  // Manual column operations
   document.getElementById('cSwapBtn').addEventListener('click', () => {
     const a = parseInt(document.getElementById('cSwapA').value);
     const b = parseInt(document.getElementById('cSwapB').value);
@@ -1094,24 +1103,35 @@ window.addEventListener('DOMContentLoaded', () => {
   
   document.getElementById('cScaleBtn').addEventListener('click', () => {
     const j = parseInt(document.getElementById('cScale').value);
-    const k = parseFloat(document.getElementById('cScaleK').value || 1);
-    const M = getM();
-    scaleCol(M, j, k);
-    writeBack(M);
-    setNarr(`Scaled C<sub>${j+1}</sub> by ${round(k,2)}.`);
-    stepState = null;
+    try {
+      const k = Frac.parse(document.getElementById('cScaleK').value);
+      if (k.isZero()) {
+        alert('Cannot scale by zero!');
+        return;
+      }
+      const M = getM();
+      scaleCol(M, j, k);
+      writeBack(M);
+      setNarr(`Scaled C<sub>${j+1}</sub> by ${k.toString()}.`);
+      stepState = null;
+    } catch(e) {
+      alert('Invalid fraction format. Use integers or fractions like 1/2.');
+    }
   });
   
   document.getElementById('cAddBtn').addEventListener('click', () => {
     const dest = parseInt(document.getElementById('cAddDest').value);
     const src = parseInt(document.getElementById('cAddSrc').value);
-    const k = parseFloat(document.getElementById('cAddK').value || 0);
-    
-    const M = getM();
-    addCol(M, dest, src, k);
-    writeBack(M);
-    setNarr(`Added: C<sub>${dest+1}</sub> ← C<sub>${dest+1}</sub> + ${round(k,2)}×C<sub>${src+1}</sub>.`);
-    stepState = null;
+    try {
+      const k = Frac.parse(document.getElementById('cAddK').value);
+      const M = getM();
+      addCol(M, dest, src, k);
+      writeBack(M);
+      setNarr(`Added: C<sub>${dest+1}</sub> ← C<sub>${dest+1}</sub> + ${k.toString()}×C<sub>${src+1}</sub>.`);
+      stepState = null;
+    } catch(e) {
+      alert('Invalid fraction format. Use integers or fractions like 1/2.');
+    }
   });
   
   createGrid();
