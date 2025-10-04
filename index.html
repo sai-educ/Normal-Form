@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Matrix Rank — Normal Form Lab</title>
+<style>
+  :root{
+    --bg:#120e20; --panel:#1a1530; --ink:#f0eaff; --muted:#c2b7e2;
+    --accent:#c77dff; --ok:#3ad59a; --warn:#ffd074; --danger:#ff8aa5;
+    --grid:#2a2344; --pivot:#9d4edd; --focus:#e0aaff; --identity:#7209b7; --zero:#c77dff;
+    --overlay:#00000090;
+  }
+  
+  * { box-sizing: border-box; }
+  
+  html,body{height:100%; margin:0; padding:0; overflow-x:hidden;}
+  body{
+    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans";
+    color:var(--ink); 
+    background: radial-gradient(1200px 700px at 15% -10%, #2a1742 0%, #120e20 60%) fixed;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ---------- Top-right HOW-TO menu ---------- */
+  .howto-anchor{position:fixed; top:10px; right:10px; z-index:1001}
+  .howto-btn{
+    background:#2a1d40; border:1px solid #4a3a70; color:var(--ink);
+    border-radius:999px; padding:10px 16px; font-size:14px; cursor:pointer;
+    min-height:44px; display:flex; align-items:center; gap:6px;
+    touch-action: manipulation;
+  }
+  .howto-btn:active{transform:scale(0.97)}
+  .howto-btn:hover{border-color:#5a4a90}
+  .backdrop{position:fixed; inset:0; background:var(--overlay); display:none; z-index:1000}
+  .backdrop.open{display:block}
+  .howto-panel{
+    position:fixed; top:0; right:0; bottom:0; width:min(440px, 100vw);
+    background:linear-gradient(180deg,#1f1b32 0%,#16132b 100%);
+    border-left:1px solid #2a2446; 
+    box-shadow:0 0 40px #00000070; z-index:1002; display:none;
+    overflow-y:auto; -webkit-overflow-scrolling: touch;
+  }
+  .howto-panel.open{display:block; animation:slideIn 0.3s ease}
+  @keyframes slideIn{from{transform:translateX(100%)} to{transform:translateX(0)}}
+  .howto-inner{padding:16px}
+  .howto-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; position:sticky; top:0; background:#1f1b32; padding:12px; margin:-16px -16px 12px; z-index:10; border-bottom:1px solid #2a2446}
+  .howto-title{font-size:16px; font-weight:700}
+  .close-btn{background:#1a1730; border:1px solid #2f2b5c; color:var(--ink); border-radius:10px; padding:10px 12px; cursor:pointer; min-height:44px; min-width:44px; display:flex; align-items:center; justify-content:center; touch-action:manipulation}
+  .close-btn:active{transform:scale(0.95)}
+  .close-btn:hover{border-color:#3e3872}
+  .lang-tabs{display:flex; gap:6px; margin:8px 0 14px}
+  .tab{background:#181735; border:1px solid #2f2a56; color:var(--muted); padding:10px 16px; border-radius:999px; cursor:pointer; font-size:14px; flex:1; text-align:center; min-height:44px; display:flex; align-items:center; justify-content:center; touch-action:manipulation}
+  .tab:active{transform:scale(0.97)}
+  .tab[aria-selected="true"]{color:#0f0d25; background:#c77dff; border-color:#c77dff; font-weight:700}
+  .howto-section{border:1px solid #2f2648; background:#181a2e; border-radius:10px; padding:14px; margin-top:10px}
+  .howto-section h3{margin:0 0 10px; font-size:15px; color:#c77dff}
+  .howto-section ol{margin:.5em 0 .4em 1.4em; line-height:1.7; padding-left:0} 
+  .howto-section li{margin:.4em 0}
+  .howto-section ul{margin:.5em 0 .4em 1.4em; line-height:1.7; padding-left:0}
+  .muted{color:var(--muted)}
+  .highlight{color:#e0aaff; font-weight:600}
+
+  header{max-width:1200px; margin:0 auto; padding:20px 16px 12px}
+  h1{margin:0 0 8px; font-size:clamp(20px,5vw,34px); line-height:1.2}
+  .sub{color:var(--muted); max-width:980px; line-height:1.6; font-size:clamp(13px,3.5vw,15px)}
+  
+  main{
+    max-width:1200px; margin:12px auto 40px; padding:0 12px; 
+    display:grid; gap:14px; grid-template-columns:1fr;
+  }
+  @media (min-width:768px){ 
+    main{grid-template-columns:1.3fr 1fr; padding:0 16px; gap:16px} 
+  }
+
+  .card{
+    background:linear-gradient(180deg,#1f1b32 0%,#16132b 100%); 
+    border:1px solid #2a2446; border-radius:14px; padding:14px; 
+    box-shadow:0 10px 28px #00000045, inset 0 1px 0 #3a2f4a33
+  }
+  h2{margin:0 0 12px; font-size:clamp(16px,4vw,18px)}
+  .row{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+  .spacer{height:10px}
+  .tag{
+    display:inline-flex; align-items:center; gap:6px; 
+    font-size:11px; padding:6px 10px; border-radius:999px; 
+    border:1px dashed #3a2f47; background:#1a1434;
+    white-space:nowrap;
+  }
+  .dot{width:10px; height:10px; border-radius:50%; flex-shrink:0}
+  .dot.pivot{background:var(--pivot)} 
+  .dot.identity{background:var(--identity)} 
+  .dot.focus{background:var(--focus)}
+
+  button, select, input[type="number"], input[type="text"]{
+    background:#2a1d40; border:1px solid #3f3160; color:var(--ink); 
+    border-radius:10px; padding:11px 14px; font-size:14px; outline:none;
+    min-height:44px; touch-action:manipulation;
+  }
+  button{cursor:pointer; font-weight:500; display:inline-flex; align-items:center; justify-content:center; gap:6px}
+  button:active{transform:scale(0.97)}
+  button:hover{border-color:#4e3872}
+  button.primary{background:linear-gradient(180deg,#7209b7,#5a189a); border-color:#9d4edd; font-weight:600}
+  button.ghost{background:#1a1730}
+  button.ok{background:#173528; border-color:#2f6b4c; font-weight:600}
+  button.warn{background:#3a3012; border-color:#69561b}
+  
+  .pill{
+    display:inline-flex; align-items:center; gap:6px; 
+    padding:8px 12px; border:1px solid #3a2f47; 
+    border-radius:999px; background:#1a1634; color:var(--muted);
+    font-size:13px; flex-wrap:wrap;
+  }
+  .pill input, .pill select{
+    padding:8px 10px; min-height:38px; font-size:13px;
+  }
+
+  /* Matrix Container - Responsive */
+  .matrix-wrap{
+    position:relative; padding:12px; border-radius:12px;
+    background: linear-gradient(180deg, rgba(199,125,255,.03), rgba(199,125,255,0)),
+                repeating-linear-gradient(0deg, transparent 0 calc(var(--cell-size) + 8px), #1a1428 calc(var(--cell-size) + 8px) calc(var(--cell-size) + 9px)),
+                repeating-linear-gradient(90deg, transparent 0 calc(var(--cell-size) + 8px), #1a1428 calc(var(--cell-size) + 8px) calc(var(--cell-size) + 9px));
+    border:1px solid #342846; overflow-x:auto; overflow-y:visible;
+    -webkit-overflow-scrolling: touch;
+    --cell-size: 70px;
+  }
+  @media (min-width:400px){
+    .matrix-wrap{--cell-size: 80px; padding:14px}
+  }
+  @media (min-width:768px){
+    .matrix-wrap{--cell-size: 90px; padding:16px}
+  }
+  
+  .brackets::before,.brackets::after{
+    content:""; position:absolute; top:8px; bottom:8px; width:6px; 
+    border:2px solid #3f2f54; border-left:none; border-right:none;
+  }
+  .brackets::before{left:6px; border-left:3px solid #3f2f54; border-radius:8px 0 0 8px}
+  .brackets::after{right:6px; border-right:3px solid #3f2f54; border-radius:0 8px 8px 0}
+  
+  .matrix{
+    display:grid; 
+    gap:6px;
+    grid-template-columns:repeat(var(--cols), var(--cell-size));
+    min-width:min-content;
+    position:relative;
+  }
+  @media (min-width:400px){
+    .matrix{gap:7px}
+  }
+  
+  .cell{position:relative}
+  .cell input{
+    width:100%; height:var(--cell-size); 
+    padding:8px; text-align:center; 
+    font-size:clamp(16px, 4vw, 18px); 
+    font-weight:600; color:var(--ink);
+    background:#221844; border:2px solid #3b2f56; 
+    border-radius:10px; 
+    transition:border-color .2s, box-shadow .2s;
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:textfield;
+  }
+  .cell input::-webkit-inner-spin-button,
+  .cell input::-webkit-outer-spin-button{
+    -webkit-appearance:none; margin:0;
+  }
+  .cell input:focus{
+    border-color:#7209b7; 
+    box-shadow:0 0 0 3px #7209b733;
+    outline:none;
+  }
+  .cell input.identity-cell{
+    background:#1a0d2e; border-color:#9d4edd; box-shadow:0 0 12px #9d4edd33;
+  }
+  .cell input.zero-cell{background:#0d1a2e; border-color:#1e2a44}
+  
+  .identityMark{
+    position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); 
+    font-size:10px; padding:3px 7px; border-radius:999px; 
+    background:#1a0d2e; color:#e0aaff; border:1px solid #9d4edd55; 
+    font-weight:600; white-space:nowrap; pointer-events:none;
+  }
+  .zeroMark{
+    position:absolute; top:-8px; right:-8px; 
+    font-size:9px; padding:2px 6px; border-radius:6px; 
+    background:#0d2055; color:#cfe3ff; border:1px solid #67a7ff55;
+    pointer-events:none;
+  }
+  
+  .identity-block-overlay{
+    position:absolute;
+    border:2px dashed #9d4edd88;
+    border-radius:8px;
+    pointer-events:none;
+    background:rgba(157,78,221,0.05);
+  }
+
+  .log{
+    background:#18162a; border:1px solid #2a2446; border-radius:12px; 
+    padding:12px; height:200px; overflow:auto; 
+    font-family:ui-monospace,Menlo,Consolas,monospace; 
+    font-size:12px; line-height:1.7;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (min-width:768px){
+    .log{height:240px; font-size:13px}
+  }
+  .log-step{color:#c77dff; font-weight:600}
+  
+  .kpis{
+    display:grid; grid-template-columns:repeat(2,1fr); 
+    gap:8px; margin-top:10px;
+  }
+  .kpi{
+    background:#18162a; border:1px solid #2a2446; 
+    border-radius:10px; padding:12px; text-align:center;
+  }
+  .kpi .label{font-size:11px; color:var(--muted); margin-bottom:6px} 
+  .kpi .value{font-size:clamp(18px,5vw,22px); font-weight:700; color:#c77dff}
+
+  details{
+    border:1px solid #2f2648; background:#181a2e; 
+    border-radius:10px; padding:12px; margin-top:12px;
+  }
+  summary{
+    cursor:pointer; font-weight:600; font-size:14px; 
+    min-height:44px; display:flex; align-items:center;
+    touch-action:manipulation; user-select:none;
+  }
+  details[open] summary{margin-bottom:12px}
+
+  footer{
+    max-width:1200px; margin:8px auto 40px; padding:0 16px; 
+    color:var(--muted); font-size:12px; line-height:1.6;
+  }
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .info-box{
+    background:#2a1a40; border:1px solid #3a2a5a; 
+    border-radius:10px; padding:12px; margin:10px 0; 
+    border-left:3px solid #c77dff; font-size:13px; line-height:1.6;
+  }
+  .info-box strong{color:#c77dff}
+
+  /* Mobile-specific adjustments */
+  @media (max-width:767px){
+    .row{gap:6px}
+    .pill{font-size:12px; padding:7px 10px}
+    button{font-size:13px; padding:10px 12px}
+    .tag{font-size:10px; padding:5px 8px}
+    h2{margin-bottom:10px}
+    .howto-section{padding:12px}
+    .howto-section h3{font-size:14px}
+    .howto-section li, .howto-section ul{font-size:13px; line-height:1.6}
+    .info-box{font-size:12px}
+  }
+
+  @media (max-width:400px){
+    .row.auto-controls{flex-direction:column; align-items:stretch}
+    .row.auto-controls button{width:100%}
+  }
+</style>
+</head>
+<body>
+  <!-- Top-right HOW-TO menu -->
+  <div class="howto-anchor">
+    <button id="howBtn" class="howto-btn" aria-haspopup="dialog" aria-controls="howPanel">
+      <span>❓</span>
+      <span>How to Use</span>
+    </button>
+  </div>
+  <div id="howBackdrop" class="backdrop" tabindex="-1" aria-hidden="true"></div>
+  <div id="howPanel" class="howto-panel" role="dialog" aria-modal="true" aria-labelledby="howTitle" aria-hidden="true">
+    <div class="howto-inner">
+      <div class="howto-head">
+        <div id="howTitle" class="howto-title">How to Use • వాడుక మార్గదర్శకం</div>
+        <button id="howClose" class="close-btn" aria-label="Close">✕</button>
+      </div>
+      <div class="lang-tabs" role="tablist" aria-label="Language tabs">
+        <button id="tabEN" class="tab" role="tab" aria-selected="true" aria-controls="panelEN">English</button>
+        <button id="tabTE" class="tab" role="tab" aria-selected="false" aria-controls="panelTE">తెలుగు</button>
+      </div>
+
+      <!-- English panel -->
+      <section id="panelEN" class="howto-section" role="tabpanel" aria-labelledby="tabEN">
+        <h3>🎯 Learning Goals</h3>
+        <ul class="muted">
+          <li>Understand <span class="highlight">Normal Form</span> as diagonal matrix with identity block</li>
+          <li>Master both <span class="highlight">row AND column operations</span></li>
+          <li>Learn systematic reduction: pivot → scale to 1 → zero row & column</li>
+          <li>See how rank appears as the size of the identity block (I<sub>r</sub>)</li>
+          <li>Connect Normal Form to invertibility and system solutions</li>
+        </ul>
+        
+        <h3>📋 Step-by-Step Instructions</h3>
+        <ol>
+          <li><strong>Set Matrix Size:</strong> Choose rows and columns (max 6×6), tap <strong>Resize</strong></li>
+          <li><strong>Enter Values:</strong> Tap cells to enter numbers, or use <strong>Preset</strong>/<strong>Randomize</strong></li>
+          <li><strong>Auto Mode:</strong> Tap <strong>Next Step</strong> to see operations one at a time
+            <ul style="margin-left:1.2em; margin-top:0.3em">
+              <li>Algorithm finds pivot, swaps to diagonal, scales to 1</li>
+              <li>Zeros entire row and column around pivot</li>
+              <li>Watch identity block grow step-by-step!</li>
+            </ul>
+          </li>
+          <li><strong>Fast Mode:</strong> Tap <strong>Finish to Normal Form</strong> to complete automatically</li>
+          <li><strong>Manual Practice:</strong> Use row/column operations yourself</li>
+          <li><strong>Check Result:</strong> <strong>Verify Normal Form</strong> confirms diagonal structure</li>
+        </ol>
+
+        <div class="info-box">
+          <strong>💡 Key Concept:</strong> Normal Form = diag(I<sub>r</sub>, 0) where r is the rank. The identity block shows linearly independent rows/columns!
+        </div>
+      </section>
+
+      <!-- Telugu panel -->
+      <section id="panelTE" class="howto-section" role="tabpanel" aria-labelledby="tabTE" hidden>
+        <h3>🎯 అభ్యాస లక్ష్యాలు</h3>
+        <ul class="muted">
+          <li><span class="highlight">Normal Form</span> ను identity block తో కూడిన diagonal matrix గా అర్థం చేసుకోవడం</li>
+          <li><span class="highlight">వరుస మరియు కాలమ్ రెండు ఆపరేషన్లు</span> నేర్చుకోవడం</li>
+          <li>క్రమబద్ధ తగ్గింపు: pivot → 1కి scale → వరుస & కాలమ్ zero చేయడం</li>
+          <li>Rank ఎలా identity block (I<sub>r</sub>) పరిమాణంగా కనిపిస్తుందో చూడటం</li>
+          <li>Normal Form ను invertibility మరియు సిస్టమ్ పరిష్కారాలతో కలపడం</li>
+        </ul>
+        
+        <h3>📋 దశలవారీ సూచనలు</h3>
+        <ol>
+          <li><strong>మాట్రిక్స్ పరిమాణం:</strong> వరుసలు మరియు నిలువులు ఎంచుకోండి, <strong>Resize</strong> నొక్కండి</li>
+          <li><strong>విలువలు నమోదు:</strong> సెల్స్ పై నొక్కి సంఖ్యలు ఇవ్వండి, లేదా <strong>Preset</strong>/<strong>Randomize</strong> వాడండి</li>
+          <li><strong>ఆటో మోడ్:</strong> <strong>Next Step</strong> నొక్కి ఒక్కో చర్య చూడండి
+            <ul style="margin-left:1.2em; margin-top:0.3em">
+              <li>అల్గారిథమ్ pivot కనుగొని, diagonal కు swap చేసి, 1కి scale చేస్తుంది</li>
+              <li>Pivot చుట్టూ మొత్తం వరుస మరియు కాలమ్ ను 0 చేస్తుంది</li>
+              <li>Identity block పెరుగుతుంటే చూడండి!</li>
+            </ul>
+          </li>
+          <li><strong>వేగవంతం:</strong> <strong>Finish to Normal Form</strong> తో ఆటోమేటిక్‌గా పూర్తి చేయండి</li>
+          <li><strong>మానువల్ ప్రాక్టీస్:</strong> మీరే వరుస/కాలమ్ ఆపరేషన్లు చేయండి</li>
+          <li><strong>తనిఖీ:</strong> <strong>Verify Normal Form</strong> తో diagonal నిర్మాణాన్ని పరిశీలించండి</li>
+        </ol>
+
+        <div class="info-box">
+          <strong>💡 ముఖ్య భావన:</strong> Normal Form = diag(I<sub>r</sub>, 0) ఇక్కడ r rank. Identity block linearly independent వరుసలు/నిలువులను చూపిస్తుంది!
+        </div>
+      </section>
+    </div>
+  </div>
+
+<header>
+  <h1>Matrix Rank — Normal Form Lab</h1>
+  <p class="sub">
+    <strong>Goal:</strong> Learn to find the <strong>rank of a matrix</strong> using <strong>Normal Form reduction</strong>. 
+    Use both row and column operations to create a diagonal matrix with an identity block. The size of the identity tells you the rank!
+  </p>
+</header>
+
+<main>
+  <!-- Matrix & Controls -->
+  <section class="card">
+    <div class="row" aria-label="Matrix size and presets">
+      <div class="pill">
+        <span>Rows:</span>
+        <input id="rows" type="number" inputmode="numeric" min="2" max="6" value="3" style="width:55px">
+      </div>
+      <div class="pill">
+        <span>Cols:</span>
+        <input id="cols" type="number" inputmode="numeric" min="2" max="6" value="4" style="width:55px">
+      </div>
+      <button id="resize">Resize</button>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="row">
+      <button id="presetA" class="ghost">Preset A</button>
+      <button id="presetB" class="ghost">Preset B</button>
+      <button id="random" class="ghost">Random</button>
+      <button id="reset" class="ghost">Clear</button>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="matrix-wrap brackets" aria-label="Matrix grid">
+      <div id="matrix" class="matrix"></div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="row" style="font-size:11px">
+      <span class="tag"><span class="dot identity"></span> Identity (I<sub>r</sub>)</span>
+      <span class="tag"><span class="dot pivot"></span> Current pivot</span>
+      <span class="tag"><span class="dot focus"></span> Focus</span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="row auto-controls" aria-label="Auto controls">
+      <button id="next" class="primary">Next Step ▷</button>
+      <button id="finish" class="ok">Finish to Normal Form</button>
+      <button id="verify" class="ghost">Verify</button>
+    </div>
+    <div class="muted" style="margin-top:10px; font-size:12px; line-height:1.5">
+      <strong>Strategy:</strong> Find pivot → swap to diagonal → scale to 1 → zero its row & column
+    </div>
+
+    <div class="spacer"></div>
+
+    <details>
+      <summary>Manual Row & Column Operations</summary>
+      <div class="spacer"></div>
+      
+      <div style="border:1px solid #3a2f47; border-radius:10px; padding:10px; background:#14101f; margin-bottom:8px">
+        <div style="font-size:12px; margin-bottom:8px; color:#c77dff; font-weight:600">Row Operations</div>
+        <div class="pill" style="width:100%; justify-content:space-between; margin-bottom:6px">
+          <span style="font-size:12px">Swap R<select id="rSwapA"></select> ↔ R<select id="rSwapB"></select></span>
+          <button id="rSwapBtn" style="padding:8px 12px; min-height:38px; font-size:12px">Swap</button>
+        </div>
+        <div class="pill" style="width:100%; justify-content:space-between; margin-bottom:6px">
+          <span style="font-size:12px">Scale R<select id="rScale"></select> by <input id="rScaleK" type="number" value="2" step="0.5" style="width:55px; padding:6px; font-size:12px"></span>
+          <button id="rScaleBtn" style="padding:8px 12px; min-height:38px; font-size:12px">Scale</button>
+        </div>
+        <div style="font-size:11px; margin-bottom:6px; color:var(--muted)">
+          R<select id="rAddDest" style="width:48px; padding:6px; font-size:11px"></select> ← 
+          R<select id="rAddDest2" style="width:48px; padding:6px; font-size:11px"></select> + 
+          <input id="rAddK" type="number" value="-1" step="0.5" style="width:55px; padding:6px; font-size:11px">·R<select id="rAddSrc" style="width:48px; padding:6px; font-size:11px"></select>
+        </div>
+        <button id="rAddBtn" style="width:100%; font-size:12px">Add Multiple of Row</button>
+      </div>
+      
+      <div style="border:1px solid #3a2f47; border-radius:10px; padding:10px; background:#14101f">
+        <div style="font-size:12px; margin-bottom:8px; color:#c77dff; font-weight:600">Column Operations</div>
+        <div class="pill" style="width:100%; justify-content:space-between; margin-bottom:6px">
+          <span style="font-size:12px">Swap C<select id="cSwapA"></select> ↔ C<select id="cSwapB"></select></span>
+          <button id="cSwapBtn" style="padding:8px 12px; min-height:38px; font-size:12px">Swap</button>
+        </div>
+        <div class="pill" style="width:100%; justify-content:space-between; margin-bottom:6px">
+          <span style="font-size:12px">Scale C<select id="cScale"></select> by <input id="cScaleK" type="number" value="2" step="0.5" style="width:55px; padding:6px; font-size:12px"></span>
+          <button id="cScaleBtn" style="padding:8px 12px; min-height:38px; font-size:12px">Scale</button>
+        </div>
+        <div style="font-size:11px; margin-bottom:6px; color:var(--muted)">
+          C<select id="cAddDest" style="width:48px; padding:6px; font-size:11px"></select> ← 
+          C<select id="cAddDest2" style="width:48px; padding:6px; font-size:11px"></select> + 
+          <input id="cAddK" type="number" value="-1" step="0.5" style="width:55px; padding:6px; font-size:11px">·C<select id="cAddSrc" style="width:48px; padding:6px; font-size:11px"></select>
+        </div>
+        <button id="cAddBtn" style="width:100%; font-size:12px">Add Multiple of Col</button>
+      </div>
+      
+      <div class="spacer"></div>
+      <div class="muted" style="font-size:11px; line-height:1.5">
+        <strong>Tip:</strong> To get diagonal form, use column ops to zero left/right of pivots!
+      </div>
+    </details>
+  </section>
+
+  <!-- Lesson, Narration, KPIs, Log -->
+  <aside class="card">
+    <h2>📚 Concept: Normal Form</h2>
+    <div class="muted" id="lesson" style="line-height:1.6; font-size:13px">
+      <p><strong>What is Normal Form?</strong><br>
+      Normal Form is a <strong>diagonal matrix</strong> with an identity block I<sub>r</sub> in the top-left corner and zeros everywhere else: diag(I<sub>r</sub>, 0). The size r is the <strong>rank</strong>!</p>
+      
+      <p><strong>Row & Column Operations:</strong></p>
+      <ul style="margin:.3em 0 .3em 1.2em">
+        <li><strong>Swap:</strong> R<sub>i</sub> ↔ R<sub>j</sub> or C<sub>i</sub> ↔ C<sub>j</sub></li>
+        <li><strong>Scale:</strong> R<sub>i</sub> ← k·R<sub>i</sub> or C<sub>j</sub> ← k·C<sub>j</sub></li>
+        <li><strong>Add:</strong> R<sub>i</sub> ← R<sub>i</sub> + k·R<sub>j</sub> or C<sub>i</sub> ← C<sub>i</sub> + k·C<sub>j</sub></li>
+      </ul>
+      
+      <div class="info-box" style="margin-top:12px">
+        <strong>Key:</strong> Normal Form reveals rank instantly and shows if a square matrix is invertible (rank = n means invertible)!
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <h2>📝 Step Narration</h2>
+    <div id="narr" class="muted" style="min-height:60px; padding:12px; background:#18162a; border-radius:10px; line-height:1.6; font-size:13px">
+      Enter values or choose a preset. Tap <strong>Next Step</strong> to begin Normal Form reduction.
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="kpis">
+      <div class="kpi">
+        <div class="label">Current Rank</div>
+        <div id="rank" class="value">–</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Identity Size</div>
+        <div id="identitySize" class="value">0×0</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <h2>📋 Operation Log</h2>
+    <div id="log" class="log" aria-live="polite"><div class="muted">Operations will appear here...</div></div>
+
+    <details style="margin-top:14px">
+      <summary>🤔 Practice Questions</summary>
+      <ul style="margin:.6em 0 0 1.3em; line-height:1.7; font-size:13px">
+        <li>If Normal Form is diag(I<sub>3</sub>, 0, 0), what's the rank?</li>
+        <li>Can a 3×5 matrix have a 4×4 identity block? Why?</li>
+        <li>If a 4×4 matrix has rank 4, what's its Normal Form?</li>
+        <li>Why do we need column operations for Normal Form?</li>
+      </ul>
+    </details>
+  </aside>
+</main>
+
+<footer>
+  <strong>Engineering Mathematics • Normal Form Lab</strong><br>
+  Row & column operations • Diagonal reduction • Identity block visualization
+</footer>
+
+<script>
+/* ===========================
+   Core State & Utilities
+   =========================== */
+let R=3, C=4;
+let inputs = [];
+let stepState = null;
+let logEl, narrEl;
+
+function round(x, decimals=2) {
+  return Math.round(x * Math.pow(10, decimals)) / Math.pow(10, decimals);
+}
+
+/* ===========================
+   HOW-TO menu behavior
+   =========================== */
+function openHowto(){
+  document.getElementById('howBackdrop').classList.add('open');
+  const p = document.getElementById('howPanel');
+  p.classList.add('open');
+  p.setAttribute('aria-hidden','false');
+  document.getElementById('howBtn').setAttribute('aria-expanded','true');
+  document.body.style.overflow = 'hidden';
+}
+function closeHowto(){
+  document.getElementById('howBackdrop').classList.remove('open');
+  const p = document.getElementById('howPanel');
+  p.classList.remove('open');
+  p.setAttribute('aria-hidden','true');
+  document.getElementById('howBtn').setAttribute('aria-expanded','false');
+  document.body.style.overflow = '';
+}
+function selectLang(tab){
+  const isEN = tab === 'EN';
+  document.getElementById('tabEN').setAttribute('aria-selected', isEN ? 'true' : 'false');
+  document.getElementById('tabTE').setAttribute('aria-selected', isEN ? 'false' : 'true');
+  document.getElementById('panelEN').hidden = !isEN;
+  document.getElementById('panelTE').hidden = isEN;
+}
+
+/* ===========================
+   Matrix Grid Management
+   =========================== */
+function createGrid(){
+  const grid = document.getElementById('matrix');
+  grid.style.setProperty('--cols', C);
+  grid.innerHTML = '';
+  inputs = [];
+  
+  for (let r=0; r<R; r++){
+    const row = [];
+    for (let c=0; c<C; c++){
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      const inp = document.createElement('input');
+      inp.type = 'number';
+      inp.inputMode = 'numeric';
+      inp.value = '0';
+      inp.step = '0.5';
+      inp.setAttribute('aria-label', `Row ${r+1}, Col ${c+1}`);
+      
+      inp.addEventListener('input', () => {
+        drawLabels();
+      });
+      inp.addEventListener('blur', () => {
+        if (inp.value === '' || inp.value === '-') inp.value = '0';
+        inp.value = round(parseFloat(inp.value || 0), 2);
+      });
+      
+      let lastTap = 0;
+      inp.addEventListener('touchend', (e) => {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+          e.preventDefault();
+          inp.focus();
+        }
+        lastTap = currentTime;
+      });
+      
+      cell.appendChild(inp);
+      grid.appendChild(cell);
+      row.push(inp);
+    }
+    inputs.push(row);
+  }
+  
+  refreshSelectors();
+  drawLabels();
+  setNarr('Matrix created. Enter values or use presets.');
+  clearLog();
+  updateKPIs();
+}
+
+function getM(){
+  const M = [];
+  for (let r=0; r<R; r++){
+    const row = [];
+    for (let c=0; c<C; c++){
+      row.push(parseFloat(inputs[r][c].value || '0'));
+    }
+    M.push(row);
+  }
+  return M;
+}
+
+function setM(M){
+  R = M.length;
+  C = M[0].length;
+  document.getElementById('rows').value = R;
+  document.getElementById('cols').value = C;
+  createGrid();
+  for (let r=0; r<R; r++){
+    for (let c=0; c<C; c++){
+      inputs[r][c].value = round(M[r][c], 2);
+    }
+  }
+  drawLabels();
+  updateKPIs();
+}
+
+function clearM(){
+  for (let r=0; r<R; r++){
+    for (let c=0; c<C; c++){
+      inputs[r][c].value = '0';
+    }
+  }
+  drawLabels();
+  updateKPIs();
+}
+
+function randomM(){
+  for (let r=0; r<R; r++){
+    for (let c=0; c<C; c++){
+      inputs[r][c].value = (Math.floor(Math.random() * 9) - 4).toString();
+    }
+  }
+  drawLabels();
+  updateKPIs();
+}
+
+/* ===========================
+   Row & Column Operations
+   =========================== */
+function swapRows(M, i, j){
+  if (i === j) return;
+  const temp = M[i];
+  M[i] = M[j];
+  M[j] = temp;
+  log(`<span class="log-step">Swap Rows</span> R<sub>${i+1}</sub> ↔ R<sub>${j+1}</sub>`);
+}
+
+function swapCols(M, i, j){
+  if (i === j) return;
+  for (let r=0; r<R; r++){
+    const temp = M[r][i];
+    M[r][i] = M[r][j];
+    M[r][j] = temp;
+  }
+  log(`<span class="log-step">Swap Cols</span> C<sub>${i+1}</sub> ↔ C<sub>${j+1}</sub>`);
+}
+
+function scaleRow(M, i, k){
+  for (let c=0; c<C; c++){
+    M[i][c] = round(M[i][c] * k, 2);
+  }
+  log(`<span class="log-step">Scale Row</span> R<sub>${i+1}</sub> ← ${round(k,2)}·R<sub>${i+1}</sub>`);
+}
+
+function scaleCol(M, j, k){
+  for (let r=0; r<R; r++){
+    M[r][j] = round(M[r][j] * k, 2);
+  }
+  log(`<span class="log-step">Scale Col</span> C<sub>${j+1}</sub> ← ${round(k,2)}·C<sub>${j+1}</sub>`);
+}
+
+function addRow(M, dest, src, k){
+  for (let c=0; c<C; c++){
+    M[dest][c] = round(M[dest][c] + k * M[src][c], 2);
+  }
+  const sign = k >= 0 ? '+' : '';
+  log(`<span class="log-step">Add Row</span> R<sub>${dest+1}</sub> ← R<sub>${dest+1}</sub> ${sign} ${round(k,2)}·R<sub>${src+1}</sub>`);
+}
+
+function addCol(M, dest, src, k){
+  for (let r=0; r<R; r++){
+    M[r][dest] = round(M[r][dest] + k * M[r][src], 2);
+  }
+  const sign = k >= 0 ? '+' : '';
+  log(`<span class="log-step">Add Col</span> C<sub>${dest+1}</sub> ← C<sub>${dest+1}</sub> ${sign} ${round(k,2)}·C<sub>${src+1}</sub>`);
+}
+
+function writeBack(M){
+  for (let r=0; r<R; r++){
+    for (let c=0; c<C; c++){
+      inputs[r][c].value = round(M[r][c], 2);
+    }
+  }
+  drawLabels();
+  updateKPIs();
+}
+
+/* ===========================
+   Rank & Normal Form Check
+   =========================== */
+function calculateRank(M){
+  let rank = 0;
+  const n = Math.min(R, C);
+  for (let i=0; i<n; i++){
+    if (Math.abs(M[i][i] - 1) < 0.01) rank++;
+    else break;
+  }
+  return rank;
+}
+
+function isNormalForm(M){
+  const r = calculateRank(M);
+  for (let i=0; i<R; i++){
+    for (let j=0; j<C; j++){
+      if (i === j && i < r){
+        if (Math.abs(M[i][j] - 1) > 0.01) return false;
+      } else {
+        if (Math.abs(M[i][j]) > 0.01) return false;
+      }
+    }
+  }
+  return true;
+}
+
+/* ===========================
+   Step-by-Step Algorithm
+   =========================== */
+function nextStep(){
+  let M = getM();
+  
+  if (!stepState){
+    stepState = {k: 0, stage: 'findPivot'};
+    log('<strong>🚀 Starting Normal Form reduction...</strong>');
+    setNarr('Beginning reduction. Looking for first non-zero pivot...');
+  }
+  
+  let {k, stage} = stepState;
+  const n = Math.min(R, C);
+  
+  if (k >= n){
+    setNarr('✅ <strong>Complete!</strong> Matrix is in Normal Form.');
+    log('<strong>✅ Done!</strong> Normal Form achieved.');
+    stepState = null;
+    drawLabels();
+    updateKPIs();
+    return;
+  }
+  
+  if (stage === 'findPivot'){
+    let found = false;
+    for (let i=k; i<R && !found; i++){
+      for (let j=k; j<C && !found; j++){
+        if (Math.abs(M[i][j]) > 0.01){
+          if (i !== k){
+            swapRows(M, k, i);
+            writeBack(M);
+            setNarr(`Found pivot at (${i+1},${j+1}). Swapped to row ${k+1}.`);
+            return;
+          }
+          if (j !== k){
+            swapCols(M, k, j);
+            writeBack(M);
+            setNarr(`Moved pivot to diagonal position (${k+1},${k+1}).`);
+            return;
+          }
+          found = true;
+          stepState.stage = 'scalePivot';
+        }
+      }
+    }
+    
+    if (!found){
+      setNarr(`No more pivots found. Rank = ${k}.`);
+      log(`<strong>Rank determined:</strong> ${k}`);
+      stepState = null;
+      drawLabels();
+      updateKPIs();
+      return;
+    }
+  }
+  
+  if (stage === 'scalePivot'){
+    const pivot = M[k][k];
+    if (Math.abs(pivot - 1) > 0.01){
+      scaleRow(M, k, 1/pivot);
+      writeBack(M);
+      setNarr(`Scaled row ${k+1} so pivot becomes 1.`);
+      stepState.stage = 'zeroCol';
+      return;
+    }
+    stepState.stage = 'zeroCol';
+  }
+  
+  if (stage === 'zeroCol'){
+    for (let r=0; r<R; r++){
+      if (r !== k && Math.abs(M[r][k]) > 0.01){
+        const factor = -M[r][k];
+        addRow(M, r, k, factor);
+        writeBack(M);
+        setNarr(`Zeroing position (${r+1},${k+1}) using row operation.`);
+        return;
+      }
+    }
+    stepState.stage = 'zeroRow';
+  }
+  
+  if (stage === 'zeroRow'){
+    for (let c=0; c<C; c++){
+      if (c !== k && Math.abs(M[k][c]) > 0.01){
+        const factor = -M[k][c];
+        addCol(M, c, k, factor);
+        writeBack(M);
+        setNarr(`Zeroing position (${k+1},${c+1}) using column operation.`);
+        return;
+      }
+    }
+    stepState.k++;
+    stepState.stage = 'findPivot';
+    setNarr(`Diagonal position ${k+1} complete. Identity block grew!`);
+    drawLabels();
+  }
+}
+
+function finish(){
+  let guard = 0;
+  while (guard++ < 500 && stepState !== null){
+    nextStep();
+  }
+}
+
+/* ===========================
+   Visual Labels
+   =========================== */
+function drawLabels(opts = {}){
+  document.querySelectorAll('.identityMark, .zeroMark, .identity-block-overlay').forEach(e => e.remove());
+  
+  const M = getM();
+  const r = calculateRank(M);
+  
+  // Draw identity block overlay
+  if (r > 0 && inputs[0] && inputs[0][0]){
+    const overlay = document.createElement('div');
+    overlay.className = 'identity-block-overlay';
+    const firstCell = inputs[0][0].getBoundingClientRect();
+    const lastCell = inputs[Math.min(r-1, R-1)][Math.min(r-1, C-1)].getBoundingClientRect();
+    const parent = document.getElementById('matrix').getBoundingClientRect();
+    
+    overlay.style.left = (firstCell.left - parent.left - 4) + 'px';
+    overlay.style.top = (firstCell.top - parent.top - 4) + 'px';
+    overlay.style.width = (lastCell.right - firstCell.left + 8) + 'px';
+    overlay.style.height = (lastCell.bottom - firstCell.top + 8) + 'px';
+    document.getElementById('matrix').appendChild(overlay);
+  }
+  
+  // Mark identity cells
+  for (let i=0; i<Math.min(r, R, C); i++){
+    if (Math.abs(M[i][i] - 1) < 0.01){
+      const cell = inputs[i][i].parentElement;
+      const mark = document.createElement('div');
+      mark.className = 'identityMark';
+      mark.textContent = '1';
+      cell.appendChild(mark);
+      inputs[i][i].classList.add('identity-cell');
+    }
+  }
+  
+  // Mark cells that should be zero
+  for (let i=0; i<R; i++){
+    for (let j=0; j<C; j++){
+      const shouldBeZero = (i !== j && (i < r || j < r)) || (i >= r && j >= r && (i < r || j < r));
+      if (Math.abs(M[i][j]) > 0.01 && ((i < r && j >= r) || (i >= r && j < r) || (i !== j && i < r && j < r))){
+        const mark = document.createElement('div');
+        mark.className = 'zeroMark';
+        mark.textContent = '→0';
+        inputs[i][j].parentElement.appendChild(mark);
+      }
+      
+      if (i >= r && j >= r){
+        inputs[i][j].classList.add('zero-cell');
+      } else {
+        inputs[i][j].classList.remove('zero-cell');
+      }
+      
+      if (i === j && i < r){
+        // Already handled above
+      } else {
+        inputs[i][j].classList.remove('identity-cell');
+      }
+    }
+  }
+  
+  updateKPIs();
+}
+
+function updateKPIs(){
+  const M = getM();
+  const r = calculateRank(M);
+  document.getElementById('rank').textContent = r;
+  document.getElementById('identitySize').textContent = `${r}×${r}`;
+}
+
+/* ===========================
+   UI Helpers
+   =========================== */
+function setNarr(html){
+  narrEl.innerHTML = html;
+}
+
+function log(html){
+  logEl.insertAdjacentHTML('beforeend', `<div>• ${html}</div>`);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function clearLog(){
+  logEl.innerHTML = '<div class="muted">Operations will appear here...</div>';
+}
+
+function refreshSelectors(){
+  const rOpts = Array.from({length: R}, (_, i) => 
+    `<option value="${i}">${i+1}</option>`
+  ).join('');
+  const cOpts = Array.from({length: C}, (_, i) => 
+    `<option value="${i}">${i+1}</option>`
+  ).join('');
+  
+  ['rSwapA', 'rSwapB', 'rScale', 'rAddDest', 'rAddDest2', 'rAddSrc'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = rOpts;
+  });
+  
+  ['cSwapA', 'cSwapB', 'cScale', 'cAddDest', 'cAddDest2', 'cAddSrc'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = cOpts;
+  });
+}
+
+function presetA(){
+  setM([
+    [2, 4, 6, 8],
+    [1, 2, 1, 3],
+    [3, 6, 7, 11]
+  ]);
+  setNarr('<strong>Preset A loaded.</strong> Rank 2 expected. Watch row & column operations!');
+  log('<strong>Preset A:</strong> 3×4 matrix (rank 2)');
+  stepState = null;
+}
+
+function presetB(){
+  setM([
+    [1, 2, 3, 4],
+    [2, 4, 6, 8],
+    [1, 1, 1, 1],
+    [0, 1, 2, 3]
+  ]);
+  setNarr('<strong>Preset B loaded.</strong> Rank 3 expected. See identity block emerge!');
+  log('<strong>Preset B:</strong> 4×4 matrix (rank 3)');
+  stepState = null;
+}
+
+/* ===========================
+   Event Listeners
+   =========================== */
+window.addEventListener('DOMContentLoaded', () => {
+  logEl = document.getElementById('log');
+  narrEl = document.getElementById('narr');
+  
+  // How-to menu
+  document.getElementById('howBtn').addEventListener('click', () => {
+    const panel = document.getElementById('howPanel');
+    if (panel.classList.contains('open')) closeHowto();
+    else openHowto();
+  });
+  document.getElementById('howClose').addEventListener('click', closeHowto);
+  document.getElementById('howBackdrop').addEventListener('click', closeHowto);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeHowto();
+  });
+  document.getElementById('tabEN').addEventListener('click', () => selectLang('EN'));
+  document.getElementById('tabTE').addEventListener('click', () => selectLang('TE'));
+  
+  // Matrix controls
+  document.getElementById('resize').addEventListener('click', () => {
+    const r = Math.max(2, Math.min(6, parseInt(document.getElementById('rows').value || '3')));
+    const c = Math.max(2, Math.min(6, parseInt(document.getElementById('cols').value || '4')));
+    R = r;
+    C = c;
+    createGrid();
+    stepState = null;
+  });
+  
+  document.getElementById('random').addEventListener('click', () => {
+    randomM();
+    setNarr('Random matrix generated. Tap <strong>Next Step</strong>!');
+    stepState = null;
+  });
+  
+  document.getElementById('reset').addEventListener('click', () => {
+    clearM();
+    setNarr('Matrix cleared. Enter your values.');
+    clearLog();
+    stepState = null;
+  });
+  
+  document.getElementById('presetA').addEventListener('click', presetA);
+  document.getElementById('presetB').addEventListener('click', presetB);
+  
+  document.getElementById('next').addEventListener('click', nextStep);
+  document.getElementById('finish').addEventListener('click', finish);
+  
+  document.getElementById('verify').addEventListener('click', () => {
+    const M = getM();
+    const isNF = isNormalForm(M);
+    const r = calculateRank(M);
+    
+    if (isNF){
+      setNarr(`✅ <strong>Correct!</strong> Normal Form achieved, rank = ${r}.`);
+      log(`<strong>✅ Verified:</strong> Normal Form, rank = ${r}`);
+    } else {
+      setNarr(`❌ Not quite. Continue—diagonal should have 1s, everything else 0.`);
+      log(`<strong>❌ Not in Normal Form yet.</strong> Current rank: ${r}`);
+    }
+    drawLabels();
+  });
+  
+  // Manual row operations
+  document.getElementById('rSwapBtn').addEventListener('click', () => {
+    const a = parseInt(document.getElementById('rSwapA').value);
+    const b = parseInt(document.getElementById('rSwapB').value);
+    const M = getM();
+    swapRows(M, a, b);
+    writeBack(M);
+    setNarr(`Swapped R<sub>${a+1}</sub> ↔ R<sub>${b+1}</sub>.`);
+    stepState = null;
+  });
+  
+  document.getElementById('rScaleBtn').addEventListener('click', () => {
+    const i = parseInt(document.getElementById('rScale').value);
+    const k = parseFloat(document.getElementById('rScaleK').value || 1);
+    const M = getM();
+    scaleRow(M, i, k);
+    writeBack(M);
+    setNarr(`Scaled R<sub>${i+1}</sub> by ${round(k,2)}.`);
+    stepState = null;
+  });
+  
+  document.getElementById('rAddBtn').addEventListener('click', () => {
+    const dest = parseInt(document.getElementById('rAddDest').value);
+    const src = parseInt(document.getElementById('rAddSrc').value);
+    const k = parseFloat(document.getElementById('rAddK').value || 0);
+    
+    const M = getM();
+    addRow(M, dest, src, k);
+    writeBack(M);
+    setNarr(`Added: R<sub>${dest+1}</sub> ← R<sub>${dest+1}</sub> + ${round(k,2)}×R<sub>${src+1}</sub>.`);
+    stepState = null;
+  });
+  
+  // Manual column operations
+  document.getElementById('cSwapBtn').addEventListener('click', () => {
+    const a = parseInt(document.getElementById('cSwapA').value);
+    const b = parseInt(document.getElementById('cSwapB').value);
+    const M = getM();
+    swapCols(M, a, b);
+    writeBack(M);
+    setNarr(`Swapped C<sub>${a+1}</sub> ↔ C<sub>${b+1}</sub>.`);
+    stepState = null;
+  });
+  
+  document.getElementById('cScaleBtn').addEventListener('click', () => {
+    const j = parseInt(document.getElementById('cScale').value);
+    const k = parseFloat(document.getElementById('cScaleK').value || 1);
+    const M = getM();
+    scaleCol(M, j, k);
+    writeBack(M);
+    setNarr(`Scaled C<sub>${j+1}</sub> by ${round(k,2)}.`);
+    stepState = null;
+  });
+  
+  document.getElementById('cAddBtn').addEventListener('click', () => {
+    const dest = parseInt(document.getElementById('cAddDest').value);
+    const src = parseInt(document.getElementById('cAddSrc').value);
+    const k = parseFloat(document.getElementById('cAddK').value || 0);
+    
+    const M = getM();
+    addCol(M, dest, src, k);
+    writeBack(M);
+    setNarr(`Added: C<sub>${dest+1}</sub> ← C<sub>${dest+1}</sub> + ${round(k,2)}×C<sub>${src+1}</sub>.`);
+    stepState = null;
+  });
+  
+  createGrid();
+});
+</script>
+</body>
+</html>
